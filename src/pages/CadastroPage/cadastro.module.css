@@ -1,0 +1,51 @@
+body{
+    overflow-x: hidden;
+}
+
+.backgroudTotal{
+    width: 100vw;
+    min-height: 100vh;
+    padding: 2rem;
+    padding-top: 70px;
+    font-family: "Edu VIC WA NT Hand Pre", cursive;
+    margin: 0;
+    overflow: hidden;
+}
+
+.cadastroBox{
+    text-align: center;
+    /* background-color: blue; */
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.imagem{
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.formBox{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    color: brown;
+}
+
+.formBox label{
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.formBox input{
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid green;
+    max-width: 650px;
+    margin: 0;
+    width: 100%;
+}
