@@ -33,7 +33,7 @@ body{
     align-items: center;
     flex-direction: column;
     margin-bottom: 2rem;
-    color: brown;
+    color: #ccc;
 }
 
 .formBox label{
@@ -44,8 +44,38 @@ body{
 .formBox input{
     padding: 0.5rem;
     border-radius: 5px;
-    border: 1px solid green;
-    max-width: 650px;
+    border: 1px solid rgb(74, 128, 189);
+    max-width: 400px;
     margin: 0;
     width: 100%;
 }
+
+button{
+    background-color: rgb(74, 128, 189);
+    color: #ccc;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+button:hover{
+    background-color: rgb(165, 165, 11);
+}
+
+.botao{
+    display: flex;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+/* .botao{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(74, 128, 189);
+}
+
+.botao:hover{
+    background-color: aqua;
+} */

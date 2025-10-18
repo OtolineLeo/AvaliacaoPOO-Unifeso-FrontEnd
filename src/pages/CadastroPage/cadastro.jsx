@@ -1,14 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import styles from './cadastro.module.css';
-// import sonic from '../../../public/images/sonnic.jpg'
 
 export function CadastroPage(){
     const navigate = useNavigate();
     const [nomeCompleto, setNomeCompleto] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
-    const [confirmarSenha, setConfirmarSenha] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -55,14 +53,8 @@ export function CadastroPage(){
                         />
                 </div>
 
-                <div className={styles.formBox}>
-                    <label>Confirmar Senha</label>
-                    <input 
-                        type="text" 
-                        placeholder="Conforme sua senha" 
-                        value={confirmarSenha} 
-                        onChange={(e) => setConfirmarSenha(e.target.value)}
-                        />
+                <div className={styles.botao}>
+                    <button type="submit">Finalizar Cadastro</button>
                 </div>
                 
             </div>
