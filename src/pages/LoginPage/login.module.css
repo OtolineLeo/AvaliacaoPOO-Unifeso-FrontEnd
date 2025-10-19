@@ -1,0 +1,59 @@
+.backgroudMain{
+    width: 100vw;
+    min-height: 100vh;
+    padding: 1rem;
+    padding-top: 70px;
+    font-family: "Edu VIC WA NT Hand Pre", cursive;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.backgroudMain h2{
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    color: rgb(118, 119, 35);
+}
+
+.formBoxLogin{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    color: #ccc;
+}
+
+.formBoxLogin label{
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.formBoxLogin input{
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid rgb(74, 128, 189);
+    max-width: 400px;
+    margin: 0;
+    width: 100%;
+}
+
+button{
+    background-color: rgb(74, 128, 189);
+    color: #ccc;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+button:hover{
+    background-color: rgb(165, 165, 11);
+}
+
+.botao{
+    display: flex;
+    margin-top: 1rem;
+    justify-content: center;
+}
