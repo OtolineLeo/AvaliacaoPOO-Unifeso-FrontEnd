@@ -30,7 +30,7 @@ export function LoginPage() {
                 <div className={styles.formBoxLogin}>
                     <h2>Senha</h2>
                     <input 
-                        type="text"
+                        type="password"
                         placeholder="Insira sua senha"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)} />

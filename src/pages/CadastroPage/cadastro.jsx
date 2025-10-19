@@ -46,7 +46,7 @@ export function CadastroPage(){
                 <div className={styles.formBox}>
                     <label>Senha</label>
                     <input 
-                        type="text" 
+                        type="password" 
                         placeholder="Insira uma senha segura" 
                         value={senha} 
                         onChange={(e) => setSenha(e.target.value)}
