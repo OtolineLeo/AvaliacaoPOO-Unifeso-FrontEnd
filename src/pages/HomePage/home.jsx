@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import styles from './home.module.css';
+import {api} from '../../services/api'
 
 export function HomePage() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
+    const [products, setProducts] = useState([]); // ALTERADO: agora é state
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [showCart, setShowCart] = useState(false);
@@ -12,8 +14,42 @@ export function HomePage() {
     const [wishlist, setWishlist] = useState([]);
     const [toast, setToast] = useState(null);
     const [sortBy, setSortBy] = useState('name');
+    const [loading, setLoading] = useState(true); // NOVO: estado de carregamento
+    const [error, setError] = useState(null); // NOVO: estado de erro
 
-    const products = [
+    useEffect(() => {
+        carregarProdutos();
+        carregarCarrinho();
+    }, []);
+
+    const carregarProdutos = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await api.getProdutos();
+            setProducts(data);
+            setFilteredProducts(data);
+        } catch (err) {
+            setError('Erro ao carregar produtos. Usando dados de exemplo.');
+            console.error('Erro:', err);
+            // Fallback para dados estáticos se o back-end falhar
+            usarProdutosEstaticos();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const carregarCarrinho = async () => {
+        try {
+            const data = await api.getCarrinho();
+            setCart(data);
+        } catch (err) {
+            console.error('Erro ao carregar carrinho:', err);
+        }
+    };
+
+    const usarProdutosEstaticos = () => {
+    const produtosEstaticos = [
         {
             id: 1,
             name: "Mouse Gamer RGB",
@@ -96,48 +132,58 @@ export function HomePage() {
         }
     ];
 
-    useEffect(() => {
-        let filtered = products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                product.category.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-            return matchesSearch && matchesCategory;
-        });
+    setProducts(produtosEstaticos);
+    setFilteredProducts(produtosEstaticos);
 
-        // Ordenação
-        filtered.sort((a, b) => {
-            switch(sortBy) {
-                case 'price-low': return a.price - b.price;
-                case 'price-high': return b.price - a.price;
-                case 'rating': return b.rating - a.rating;
-                default: return a.name.localeCompare(b.name);
-            }
-        });
-
-        setFilteredProducts(filtered);
-    }, [searchTerm, selectedCategory, sortBy]);
+    };
 
     useEffect(() => {
-        setFilteredProducts(products);
-    }, []);
+    let filtered = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            product.category.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    // Ordenação
+    filtered.sort((a, b) => {
+        switch(sortBy) {
+            case 'price-low': return a.price - b.price;
+            case 'price-high': return b.price - a.price;
+            case 'rating': return b.rating - a.rating;
+            default: return a.name.localeCompare(b.name);
+        }
+    });
+
+    setFilteredProducts(filtered);
+}, [searchTerm, selectedCategory, sortBy, products]);
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 3000);
     };
 
-    const addToCart = (product) => {
-        const existingItem = cart.find(item => item.id === product.id);
-        if (existingItem) {
-            setCart(cart.map(item =>
-                item.id === product.id
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            ));
-        } else {
-            setCart([...cart, { ...product, quantity: 1 }]);
+    const addToCart = async (product) => {
+        try {
+            await api.adicionarAoCarrinho(product.id, 1);
+            
+            // Atualiza o carrinho local
+            const existingItem = cart.find(item => item.id === product.id);
+            if (existingItem) {
+                setCart(cart.map(item =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                ));
+            } else {
+                setCart([...cart, { ...product, quantity: 1 }]);
+            }
+            
+            showToast(`${product.name} adicionado ao carrinho!`);
+        } catch (err) {
+            showToast('Erro ao adicionar ao carrinho', 'error');
+            console.error('Erro:', err);
         }
-        showToast(`${product.name} adicionado ao carrinho!`);
     };
 
     const toggleWishlist = (product) => {
@@ -171,8 +217,15 @@ export function HomePage() {
         storage: 'Armazenamento'
     };
 
-    const removeFromCart = (productId) => {
-        setCart(cart.filter(item => item.id !== productId));
+    const removeFromCart = async (productId) => {
+        try {
+            await api.removerDoCarrinho(productId);
+            setCart(cart.filter(item => item.id !== productId));
+            showToast('Item removido do carrinho', 'info');
+        } catch (err) {
+            showToast('Erro ao remover do carrinho', 'error');
+            console.error('Erro:', err);
+        }
     };
 
     const getTotalPrice = () => {
@@ -183,6 +236,17 @@ export function HomePage() {
         navigate('/');
     };
 
+    if (loading) {
+        return (
+            <div className={styles.homeContainer}>
+                <div className={styles.loadingContainer}>
+                    <div className={styles.spinner}></div>
+                    <p>Carregando produtos...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.homeContainer}>
             <div className={styles.floatingShapes}>
@@ -192,6 +256,12 @@ export function HomePage() {
                 <div className={styles.shape}></div>
                 <div className={styles.shape}></div>
             </div>
+
+            {error && (
+                <div className={styles.errorBanner}>
+                    <span>⚠️ {error}</span>
+                </div>
+            )}
 
             <header className={styles.header}>
                 <div className={styles.headerContent}>
